@@ -2,8 +2,6 @@ import { Avatar, Button, List, Tag } from "antd";
 import { colors } from "../colors";
 import { useAppProvider } from "../AppProvider";
 import usePositions from "../hooks/usePositions";
-import useExpireParimutuel from "../hooks/useExpireParimutuel";
-import { PositionSideEnum } from "@hxronetwork/parimutuelsdk";
 import OrderHistoryItem from "./OrderHistoryItem";
 import React from "react";
 
@@ -12,11 +10,6 @@ const OrderHistory = () => {
   const { data: positionsData, isLoading } = usePositions(
     marketPair,
     timeInterval
-  );
-  const { data: parimutuelData } = useExpireParimutuel(
-    marketPair,
-    timeInterval,
-    "4mQfncGgYu1XyZB1WBBi49GTRf7uPyiMuUETDDhVFdp7"
   );
   return (
     <List
