@@ -59,20 +59,22 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
       <ContextProvider>
         <QueryClientProvider client={queryClient}>
           <Hydrate state={pageProps.dehydratedState}>
-            <ColorModeContextProvider>
-              <AppProvider>
-                <div
-                  style={{
-                    backgroundColor: colors.background,
-                    height: "150vh",
-                  }}
-                >
-                  {renderComponent()}
-                </div>
-              </AppProvider>
-              <RefineKbar />
-              <UnsavedChangesNotifier />
-            </ColorModeContextProvider>
+            <RefineKbarProvider>
+              <ColorModeContextProvider>
+                <AppProvider>
+                  <div
+                    style={{
+                      backgroundColor: colors.background,
+                      height: "150vh",
+                    }}
+                  >
+                    {renderComponent()}
+                  </div>
+                </AppProvider>
+                <RefineKbar />
+                <UnsavedChangesNotifier />
+              </ColorModeContextProvider>
+            </RefineKbarProvider>
           </Hydrate>
         </QueryClientProvider>
       </ContextProvider>

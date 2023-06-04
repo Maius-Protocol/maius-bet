@@ -11,6 +11,7 @@ import {
   Keypair,
   PublicKey,
   sendAndConfirmTransaction,
+  SystemProgram,
   Transaction,
 } from "@solana/web3.js";
 import { useMemo } from "react";
@@ -81,7 +82,9 @@ function useTransferUSDC() {
         to!.publicKey
       );
     }
-    const transaction = new Transaction().add(
+
+    const transaction = new Transaction();
+    transaction.add(
       createTransferInstruction(
         fromTokenAccount.address,
         toTokenAccount.address,
@@ -90,6 +93,13 @@ function useTransferUSDC() {
         [],
         TOKEN_PROGRAM_ID
       )
+    );
+    transaction.add(
+      SystemProgram.transfer({
+        fromPubkey: wallet.publicKey,
+        toPubkey: to.publicKey,
+        lamports: 10000000,
+      })
     );
     transaction.feePayer = wallet.publicKey;
     transaction.recentBlockhash = (

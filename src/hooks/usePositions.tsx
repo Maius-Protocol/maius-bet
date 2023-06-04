@@ -9,11 +9,15 @@ import {
 } from "@hxronetwork/parimutuelsdk";
 import useMarkets from "./useMarkets";
 import { ENABLED_AUTO_REFETCH } from "../constants";
+import { PublicKey } from "@solana/web3.js";
 
-function usePositions(marketPair: MarketPairEnum, timeSeconds: number) {
+function usePositions(
+  marketPair: MarketPairEnum,
+  timeSeconds: number,
+  publicKey: PublicKey
+) {
   const { connection } = useConnection();
   const { data: marketsData } = useMarkets(marketPair, timeSeconds);
-  const { publicKey, signTransaction } = useWallet();
   const config = PariConfig.config;
   const parimutuelWeb3 = new ParimutuelWeb3(config, connection);
   return useQuery<ParimutuelPosition[]>(
