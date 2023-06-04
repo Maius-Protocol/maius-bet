@@ -10,6 +10,9 @@ import dynamic from "next/dynamic";
 const HeaderAccount = dynamic(() => import("../src/components/HeaderAccount"), {
   ssr: false,
 });
+const PositionQueue = dynamic(() => import("../src/components/PositionQueue"), {
+  ssr: false,
+});
 
 export default function Index() {
   return (
@@ -38,6 +41,7 @@ export default function Index() {
         </Col>
         <Col className="gutter-row" span={11}>
           <div className="pr-3">
+            <PositionQueue />
             <OrderHistory />
           </div>
         </Col>

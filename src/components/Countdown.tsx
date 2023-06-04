@@ -17,13 +17,19 @@ const CountdownComponent = ({ seconds, total, data }) => {
     start();
   }, []);
 
-  console.log(timeLeft);
-
   useEffect(() => {
     setTimeout(() => {
       setDisplayDetail(true);
     }, 1000);
   }, []);
+
+  useEffect(() => {
+    if (timeLeft === 0) {
+      if (window.triggerOrder) {
+        window.triggerOrder();
+      }
+    }
+  }, [timeLeft]);
 
   return (
     <>

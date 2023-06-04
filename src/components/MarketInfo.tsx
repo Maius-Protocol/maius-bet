@@ -8,7 +8,7 @@ import {
   Space,
 } from "antd";
 import { MarketPairEnum, PositionSideEnum } from "@hxronetwork/parimutuelsdk";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import useMarkets from "../hooks/useMarkets";
 import useParimutuels from "../hooks/useParimutuels";
 import CountdownComponent from "@components/Countdown";
@@ -19,7 +19,13 @@ import { colors } from "../colors";
 import MarketOptions from "@components/MarketOptions";
 import { TimeIntervals, useAppProvider } from "../AppProvider";
 import dynamic from "next/dynamic";
-
+import useLocalStorage from "use-local-storage";
+import { TOPUP_WALLET_STORAGE_KEY } from "../constants";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { Keypair } from "@solana/web3.js";
+import bs58 from "bs58";
+import useTransferUSDC from "../hooks/useTransferUSDC";
+const web3 = require("@solana/web3.js");
 const CreateTopupWalletAlert = dynamic(
   () => import("./CreateTopupWalletAlert"),
   {
@@ -28,7 +34,12 @@ const CreateTopupWalletAlert = dynamic(
 );
 
 const MarketInfo = () => {
-  const { marketPair, timeInterval } = useAppProvider();
+  const [preTopupAddr, setPreTopupAddr] = useLocalStorage(
+    TOPUP_WALLET_STORAGE_KEY,
+    ""
+  );
+  const wallet = useWallet();
+  const { marketPair, timeInterval, queue, setQueue } = useAppProvider();
   const [amount, setAmount] = useState(10);
   const [repeatTimes, setRepeatTimes] = useState(1);
   const selectingInterval = TimeIntervals.find(
@@ -39,7 +50,7 @@ const MarketInfo = () => {
     timeInterval
   );
   const { mutateAsync, isLoading: isPlacing } = usePlacePosition();
-
+  const { mutateAsync: transfer, isLoading: isTransfering } = useTransferUSDC();
   const isLoading = isLoadingMarket;
   const currentTime = new Date().getTime();
   const timeDiff = data?.locksTime
@@ -52,7 +63,22 @@ const MarketInfo = () => {
   };
   const onChangeRepeatTimes = (value: number) => {
     console.log("changed", value);
-    setAmount(value);
+    setRepeatTimes(value);
+  };
+
+  const topupRepeatWallet = async (side) => {
+    await transfer(amount * repeatTimes);
+    setQueue([
+      ...queue,
+      ...Array.from(Array(repeatTimes).keys())?.map(() => {
+        return {
+          marketPair,
+          timeInterval,
+          amount: amount,
+          side: side,
+        };
+      }),
+    ]);
   };
 
   return (
@@ -110,6 +136,7 @@ const MarketInfo = () => {
                     addonAfter="times"
                     min={1}
                     max={60}
+                    disabled={preTopupAddr === ""}
                     defaultValue={1}
                     onChange={onChangeRepeatTimes}
                   />
@@ -117,32 +144,40 @@ const MarketInfo = () => {
                 <Divider />
                 <div className="w-100 d-flex flex-row gap-3">
                   <Button
-                    onClick={() => {
-                      mutateAsync({
-                        pariPubkey: data?.pubkey,
-                        side: PositionSideEnum.LONG,
-                        amount: amount,
-                      }).then();
+                    onClick={async () => {
+                      if (repeatTimes > 1) {
+                        await topupRepeatWallet(PositionSideEnum.LONG);
+                      } else {
+                        await mutateAsync({
+                          pariPubkey: data?.pubkey,
+                          side: PositionSideEnum.LONG,
+                          amount: amount,
+                        });
+                      }
                     }}
                     type="primary"
                     icon={<ArrowUpOutlined />}
                     size="large"
-                    loading={isPlacing}
+                    loading={isPlacing || isTransfering}
                     style={{ backgroundColor: "green" }}
                     block
                   >
                     Long
                   </Button>
                   <Button
-                    onClick={() => {
-                      mutateAsync({
-                        pariPubkey: data?.pubkey,
-                        side: PositionSideEnum.SHORT,
-                        amount: amount,
-                      }).then();
+                    onClick={async () => {
+                      if (repeatTimes > 1) {
+                        await topupRepeatWallet(PositionSideEnum.SHORT);
+                      } else {
+                        await mutateAsync({
+                          pariPubkey: data?.pubkey,
+                          side: PositionSideEnum.SHORT,
+                          amount: amount,
+                        });
+                      }
                     }}
                     type="primary"
-                    loading={isPlacing}
+                    loading={isPlacing || isTransfering}
                     icon={<ArrowDownOutlined />}
                     size="large"
                     style={{ backgroundColor: "red" }}

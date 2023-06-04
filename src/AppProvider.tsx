@@ -35,9 +35,17 @@ export const AppProvider = ({ children }) => {
   const [timeInterval, setTimeInterval] = useState<any>(
     TimeIntervals[0].seconds
   );
+  const [queue, setQueue] = useState([]);
   return (
     <AppProviderContext.Provider
-      value={{ marketPair, timeInterval, setMarketPair, setTimeInterval }}
+      value={{
+        queue,
+        setQueue,
+        marketPair,
+        timeInterval,
+        setMarketPair,
+        setTimeInterval,
+      }}
     >
       {children}
     </AppProviderContext.Provider>

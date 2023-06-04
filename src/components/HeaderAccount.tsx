@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import { Statistic } from "antd";
+import { Button, Statistic } from "antd";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import React, { useEffect, useMemo } from "react";
 import CountUp from "react-countup";
@@ -9,14 +9,16 @@ import useLocalStorage from "use-local-storage";
 import { TOPUP_WALLET_STORAGE_KEY } from "../constants";
 import { Keypair } from "@solana/web3.js";
 import bs58 from "bs58";
+import useReclaim from "../hooks/useReclaim";
 
 const HeaderAccount = () => {
   const [preTopupAddr, setPreTopupAddr] = useLocalStorage(
     TOPUP_WALLET_STORAGE_KEY,
     ""
   );
+  const { isLoading: isClaiming, mutateAsync: claim } = useReclaim();
   const preTopupAddrPublic = useMemo(() => {
-    if (preTopupAddr !== "") {
+    if (preTopupAddr && preTopupAddr !== "") {
       return Keypair.fromSecretKey(bs58.decode(preTopupAddr)).publicKey;
     }
   }, [preTopupAddr]);
@@ -30,24 +32,37 @@ const HeaderAccount = () => {
 
   return (
     <>
-      <div className="d-flex flex-row">
+      <div className="d-flex flex-row align-items-center">
         <>
-          {preTopupAddr !== "" && (
-            <Statistic
-              title="Pre-topup"
-              value={topupWallet}
-              precision={2}
-              formatter={formatter}
-              style={{ marginRight: "24px" }}
-            />
-          )}
           <Statistic
             title="Wallet Balance"
-            value={data}
+            value={data / 1_000}
             loading={isLoadingWallet}
             precision={2}
+            style={{ marginRight: "24px" }}
             formatter={formatter}
           />
+          {preTopupAddr !== "" && (
+            <>
+              <Statistic
+                title="Pre-topup"
+                value={topupWallet / 1_000}
+                precision={2}
+                formatter={formatter}
+                style={{ marginRight: "24px" }}
+              />
+              <Button
+                onClick={() => {
+                  claim();
+                }}
+                loading={isClaiming}
+                style={{ marginRight: 24 }}
+                type="primary"
+              >
+                Reclaim Topup Wallet
+              </Button>
+            </>
+          )}
         </>
       </div>
       <div>

@@ -44,34 +44,48 @@ const OrderHistoryItem = ({ item }) => {
     >
       <List.Item.Meta
         avatar={
-          side === PositionSideEnum.SHORT ? (
-            <Button
-              type="primary"
-              icon={<ArrowDownOutlined />}
-              style={{ backgroundColor: "red" }}
+          <div className="d-flex flex-column">
+            {side === PositionSideEnum.SHORT ? (
+              <Button
+                type="primary"
+                icon={<ArrowDownOutlined />}
+                style={{ backgroundColor: "red" }}
+              >
+                Short
+              </Button>
+            ) : (
+              <Button
+                type="primary"
+                icon={<ArrowUpOutlined />}
+                style={{ backgroundColor: "green" }}
+              >
+                Long
+              </Button>
+            )}
+            <Tag
+              bordered
+              style={{
+                padding: "6px",
+                marginTop: "8px",
+                width: "100%",
+                textAlign: "center",
+              }}
+              color={item?.info?.position?.paid ? "green" : "red"}
             >
-              Short
-            </Button>
-          ) : (
-            <Button
-              type="primary"
-              icon={<ArrowUpOutlined />}
-              style={{ backgroundColor: "green" }}
-            >
-              Long
-            </Button>
-          )
+              {item?.info?.position?.paid ? "PAID" : "UNPAID"}
+            </Tag>
+          </div>
         }
         title={
-          <a href="https://ant.design">
+          <a
+            target="_blank"
+            href={`https://solana.fm/address/${item.info.parimutuelPubkey?.toBase58()}?cluster=devnet-solana`}
+          >
             {item.info.parimutuelPubkey?.toBase58()}
           </a>
         }
         description={
           <div className="mt-2">
-            <Tag color={item?.info?.position?.paid ? "green" : "red"}>
-              {item?.info?.position?.paid ? "PAID" : "UNPAID"}
-            </Tag>
             <Row gutter={16}>
               <Col span={12}>
                 <Countdown title="Count down" value={deadline} />
@@ -85,8 +99,8 @@ const OrderHistoryItem = ({ item }) => {
                           side === PositionSideEnum.LONG) ||
                         (parimutuelData?.strike! > parimutuelData?.index! &&
                           side === PositionSideEnum.SHORT)
-                        ? "You win"
-                        : "You lose"
+                        ? "🎉 Win"
+                        : "😭 Lose"
                       : "Pending"
                   }
                 />
