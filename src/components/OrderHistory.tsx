@@ -32,7 +32,7 @@ const OrderHistory = () => {
   const { data: positionsTopupData, isLoading: isLoadingTopup } = usePositions(
     marketPair,
     timeInterval,
-    preTopupAddrPublic.publicKey!
+    preTopupAddrPublic?.publicKey!
   );
   const isMutating = Boolean(useIsMutating(["place-positions"]));
 
