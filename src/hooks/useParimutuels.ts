@@ -31,7 +31,7 @@ function useParimutuels(marketPair: MarketPairEnum, timeSeconds: number) {
     [useParimutuelsKey, marketPair, timeSeconds],
     async () => {
       const parimutuels = await parimutuelWeb3.getParimutuels(marketsByTime);
-      const pari_markets = parimutuels.filter(
+      let pari_markets = parimutuels.filter(
         (account) =>
           account.info.parimutuel.timeWindowStart.toNumber() > Date.now() &&
           account.info.parimutuel.timeWindowStart.toNumber() <
