@@ -45,10 +45,11 @@ const MarketInfo = () => {
   const selectingInterval = TimeIntervals.find(
     (e) => e.seconds === timeInterval
   );
-  const { data, isLoading: isLoadingMarket } = useParimutuels(
-    marketPair as MarketPairEnum,
-    timeInterval
-  );
+  const {
+    data,
+    isLoading: isLoadingMarket,
+    refetch,
+  } = useParimutuels(marketPair as MarketPairEnum, timeInterval);
   const { mutateAsync, isLoading: isPlacing } = usePlacePosition();
   const { mutateAsync: transfer, isLoading: isTransfering } = useTransferUSDC();
   const isLoading = isLoadingMarket;
@@ -80,6 +81,23 @@ const MarketInfo = () => {
       }),
     ]);
   };
+
+  const triggerOrder = async () => {
+    const _data = await refetch();
+    const pop = queue?.[0];
+    if (pop) {
+      await mutateAsync({
+        useTopupWallet: true,
+        pariPubkey: _data?.data?.pubkey,
+        side: pop.side,
+        amount: pop.amount,
+      });
+      setQueue(queue.slice(1));
+    }
+  };
+
+  window.triggerOrder = triggerOrder;
+  console.log(queue);
 
   return (
     <>

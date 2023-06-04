@@ -32,11 +32,6 @@ const PositionQueue = () => {
       },
     },
   ];
-  const triggerOrder = () => {};
-
-  window.triggerOrder = triggerOrder;
-  console.log(queue);
-
   return (
     <UnmountClosed isOpened={queue?.length !== 0}>
       <Card

@@ -8,29 +8,52 @@ import {
   PositionSideEnum,
   WalletSigner,
 } from "@hxronetwork/parimutuelsdk";
-import { PublicKey } from "@solana/web3.js";
+import { Keypair, PublicKey } from "@solana/web3.js";
+import { useMemo } from "react";
+import bs58 from "bs58";
+import useLocalStorage from "use-local-storage";
+import { TOPUP_WALLET_STORAGE_KEY } from "../constants";
 
 function usePlacePosition() {
+  const [preTopupAddr, setPreTopupAddr] = useLocalStorage(
+    TOPUP_WALLET_STORAGE_KEY,
+    ""
+  );
   const { connection } = useConnection();
   const { publicKey, signTransaction } = useWallet();
   const wallet = useWallet();
   const config = PariConfig.config;
   const parimutuelWeb3 = new ParimutuelWeb3(config, connection);
+  const keypair = useMemo(() => {
+    if (preTopupAddr && preTopupAddr !== "") {
+      return Keypair.fromSecretKey(bs58.decode(preTopupAddr));
+    }
+  }, [preTopupAddr]);
 
-  return useMutation(async ({ pariPubkey, side, amount }) => {
+  return useMutation(async ({ useTopupWallet, pariPubkey, side, amount }) => {
     if (!publicKey) {
       console.error("Send Transaction: Wallet not connected!");
       return;
     }
     let transactionId = "";
     try {
-      transactionId = await parimutuelWeb3.placePosition(
-        wallet as WalletSigner,
-        new PublicKey(pariPubkey),
-        parseFloat(amount) * (10 ** 9 / 1),
-        side,
-        Date.now()
-      );
+      if (useTopupWallet) {
+        transactionId = await parimutuelWeb3.placePosition(
+          keypair,
+          new PublicKey(pariPubkey),
+          parseFloat(amount) * (10 ** 9 / 1),
+          side,
+          Date.now()
+        );
+      } else {
+        transactionId = await parimutuelWeb3.placePosition(
+          wallet as WalletSigner,
+          new PublicKey(pariPubkey),
+          parseFloat(amount) * (10 ** 9 / 1),
+          side,
+          Date.now()
+        );
+      }
 
       if (transactionId) {
         console.log(`Transaction: ${transactionId}`);
