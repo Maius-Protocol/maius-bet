@@ -128,6 +128,7 @@ const MarketInfo = () => {
             {data && (
               <>
                 <CountdownComponent
+                  key={`countdown_${data.pubkey}`}
                   seconds={timeDiff}
                   total={selectingInterval?.seconds}
                   data={data}
