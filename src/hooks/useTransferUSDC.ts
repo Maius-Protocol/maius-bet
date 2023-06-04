@@ -89,7 +89,7 @@ function useTransferUSDC() {
         fromTokenAccount.address,
         toTokenAccount.address,
         wallet.publicKey,
-        1000000000 * amount,
+        1_000_000_000 * amount,
         [],
         TOKEN_PROGRAM_ID
       )

@@ -61,18 +61,29 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
           <Hydrate state={pageProps.dehydratedState}>
             <RefineKbarProvider>
               <ColorModeContextProvider>
-                <AppProvider>
-                  <div
-                    style={{
-                      backgroundColor: colors.background,
-                      height: "150vh",
-                    }}
-                  >
-                    {renderComponent()}
-                  </div>
-                </AppProvider>
-                <RefineKbar />
-                <UnsavedChangesNotifier />
+                <Refine
+                  routerProvider={routerProvider}
+                  dataProvider={dataProvider(API_URL)}
+                  notificationProvider={notificationProvider}
+                  authProvider={authProvider}
+                  options={{
+                    syncWithLocation: true,
+                    warnWhenUnsavedChanges: true,
+                  }}
+                >
+                  <AppProvider>
+                    <div
+                      style={{
+                        backgroundColor: colors.background,
+                        height: "150vh",
+                      }}
+                    >
+                      {renderComponent()}
+                    </div>
+                  </AppProvider>
+                  <RefineKbar />
+                  <UnsavedChangesNotifier />
+                </Refine>
               </ColorModeContextProvider>
             </RefineKbarProvider>
           </Hydrate>
