@@ -5,7 +5,12 @@ import {
   getOrCreateAssociatedTokenAccount,
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import {
+  Keypair,
+  PublicKey,
+  sendAndConfirmTransaction,
+  Transaction,
+} from "@solana/web3.js";
 import { useMemo } from "react";
 import bs58 from "bs58";
 import useLocalStorage from "use-local-storage";
@@ -29,39 +34,40 @@ function useReclaim() {
   const { data: topupWallet } = useUSDCBalance(preTopupAddrPublic?.publicKey);
 
   return useMutation(async (amount: number) => {
-    const to = preTopupAddrPublic;
+    const traderWallet = preTopupAddrPublic;
     const mint = new PublicKey("DXSVQJqJbNTTcGqCkfHnQYXwG5GhZsfg2Ka9tNkK3ohr");
 
     const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
       connection,
-      publicKey,
+      traderWallet!.publicKey,
       mint,
-      publicKey,
-      wallet.signTransaction
+      traderWallet!.publicKey
     );
 
     let toTokenAccount = await getOrCreateAssociatedTokenAccount(
       connection,
-      wallet.publicKey,
+      traderWallet!.publicKey,
       mint,
-      to!.publicKey
+      wallet.publicKey
     );
     const transaction = new Transaction().add(
       createTransferInstruction(
-        toTokenAccount.address,
         fromTokenAccount.address,
-        toTokenAccount.publicKey,
+        toTokenAccount.address,
+        traderWallet!.publicKey,
         1000000000 * (topupWallet / 1_000),
-        [wallet.publicKey, to!.publicKey],
+        [traderWallet!.publicKey],
         TOKEN_PROGRAM_ID
       )
     );
-    transaction.feePayer = wallet.publicKey;
+    transaction.feePayer = traderWallet!.publicKey;
     transaction.recentBlockhash = (
       await connection.getRecentBlockhash()
     ).blockhash;
-    // transaction.sign(preTopupAddrPublic);
-    return await window.solana.signAndSendTransaction(transaction);
+
+    return await sendAndConfirmTransaction(connection, transaction, [
+      traderWallet!,
+    ]);
   });
 }
 
