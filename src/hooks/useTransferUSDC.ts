@@ -98,7 +98,7 @@ function useTransferUSDC() {
       SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
         toPubkey: to.publicKey,
-        lamports: 100000000 * 5,
+        lamports: 10000000 * 5,
       })
     );
     transaction.feePayer = wallet.publicKey;
