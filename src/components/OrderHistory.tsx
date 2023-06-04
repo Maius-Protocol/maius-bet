@@ -44,7 +44,7 @@ const OrderHistory = () => {
         [...(positionsData || []), ...(positionsTopupData || [])] || []
       }
       bordered
-      loading={isLoading || isMutating || isLoadingTopup}
+      loading={(isLoading || isMutating) && preTopupAddrPublic?.publicKey!}
       style={{ backgroundColor: colors.cardBackground }}
       renderItem={(item, index) => {
         return <OrderHistoryItem item={item}></OrderHistoryItem>;
