@@ -26,7 +26,7 @@ function useReclaim() {
       return Keypair.fromSecretKey(bs58.decode(preTopupAddr));
     }
   }, [preTopupAddr]);
-  const { data: topupWallet } = useUSDCBalance(preTopupAddrPublic.publicKey);
+  const { data: topupWallet } = useUSDCBalance(preTopupAddrPublic?.publicKey);
 
   return useMutation(async (amount: number) => {
     const to = preTopupAddrPublic;
