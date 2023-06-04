@@ -26,7 +26,9 @@ const CountdownComponent = ({ seconds, total, data }) => {
   useEffect(() => {
     if (timeLeft === 0) {
       if (window.triggerOrder) {
-        window.triggerOrder();
+        setTimeout(() => {
+          window.triggerOrder();
+        }, 5000);
       }
     }
   }, [timeLeft]);

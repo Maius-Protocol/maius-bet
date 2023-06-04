@@ -45,6 +45,7 @@ function usePlacePosition() {
           side,
           Date.now()
         );
+        alert(transactionId);
       } else {
         transactionId = await parimutuelWeb3.placePosition(
           wallet as WalletSigner,
@@ -56,10 +57,10 @@ function usePlacePosition() {
       }
 
       if (transactionId) {
-        console.log(`Transaction: ${transactionId}`);
+        window.alert(`Transaction: ${transactionId}`);
       }
     } catch (error) {
-      console.error(`Transaction failed! ${error.message}`, transactionId);
+      window.alert(`Transaction failed! ${error.message}`, transactionId);
       return;
     }
   });

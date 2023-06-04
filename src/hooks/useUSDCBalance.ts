@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
+import { ENABLED_AUTO_REFETCH } from "../constants";
 
 function useUSDCBalance(walletAddress: PublicKey) {
   const { connection } = useConnection();
@@ -24,7 +25,7 @@ function useUSDCBalance(walletAddress: PublicKey) {
       return usdcBalance;
     },
     {
-      refetchInterval: process.env.NODE_ENV === "production" ? 6000 : false,
+      refetchInterval: ENABLED_AUTO_REFETCH ? 6000 : false,
     }
   );
 }

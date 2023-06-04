@@ -8,6 +8,7 @@ import {
   ParimutuelWeb3,
 } from "@hxronetwork/parimutuelsdk";
 import useMarkets from "./useMarkets";
+import { ENABLED_AUTO_REFETCH } from "../constants";
 
 function usePositions(marketPair: MarketPairEnum, timeSeconds: number) {
   const { connection } = useConnection();
@@ -26,7 +27,7 @@ function usePositions(marketPair: MarketPairEnum, timeSeconds: number) {
     },
     {
       enabled: !!publicKey,
-      refetchInterval: process.env.NODE_ENV === "production" ? 2000 : false,
+      refetchInterval: ENABLED_AUTO_REFETCH ? 2000 : false,
     }
   );
 }
