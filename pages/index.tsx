@@ -1,4 +1,4 @@
-import { Card, Col, Divider, Row } from "antd";
+import { Card, Col, Divider, Row, Statistic } from "antd";
 import React from "react";
 import MarketInfo from "@components/MarketInfo";
 import {
@@ -6,12 +6,16 @@ import {
   WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui";
 import OrderHistory from "@components/OrderHistory";
+import dynamic from "next/dynamic";
+const HeaderAccount = dynamic(() => import("../src/components/HeaderAccount"), {
+  ssr: false,
+});
 
 export default function Index() {
   return (
     <div className="d-flex flex-column">
-      <div className="p-3">
-        <WalletMultiButton />
+      <div className="p-3 d-flex flex-row align-items-center justify-content-between">
+        {typeof window !== "undefined" && <HeaderAccount />}
       </div>
       <Divider style={{ marginTop: 0 }} />
       <div

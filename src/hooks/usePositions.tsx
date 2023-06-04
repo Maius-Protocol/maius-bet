@@ -26,7 +26,7 @@ function usePositions(marketPair: MarketPairEnum, timeSeconds: number) {
     },
     {
       enabled: !!publicKey,
-      // refetchInterval: 3000,
+      refetchInterval: process.env.NODE_ENV === "production" ? 2000 : false,
     }
   );
 }

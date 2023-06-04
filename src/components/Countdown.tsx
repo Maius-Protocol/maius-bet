@@ -1,8 +1,9 @@
-import { Divider, Progress } from "antd";
+import { Divider, Progress, Statistic } from "antd";
 import Countdown from "react-countdown";
 import React, { useEffect, useState } from "react";
 import { UnmountClosed } from "react-collapse";
 import useCountDown from "react-countdown-hook";
+import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 
 const interval = 1000;
 const CountdownComponent = ({ seconds, total, data }) => {
@@ -42,11 +43,39 @@ const CountdownComponent = ({ seconds, total, data }) => {
           />
         </UnmountClosed>
         <UnmountClosed isOpened={percent !== 0 && displayDetail}>
-          <div style={{ marginLeft: 64 }}>
-            <p style={{ color: "white" }}>Long Pool: {data?.longPool}</p>
-            <p style={{ color: "white" }}>Short Pool: {data?.shortPool}</p>
-            <p style={{ color: "white" }}>Long Odds: {data?.longOdds}</p>
-            <p style={{ color: "white" }}>Short Odds: {data?.shortOdds}</p>
+          <div className="d-flex flex-row w-100" style={{ marginLeft: 64 }}>
+            <div className="col-6">
+              <Statistic
+                title="Long Pool"
+                prefix={<ArrowUpOutlined />}
+                valueStyle={{ color: "#3f8600" }}
+                value={data?.longPool}
+                precision={2}
+              />
+              <Statistic
+                title="Short Pool"
+                valueStyle={{ color: "#cf1322" }}
+                prefix={<ArrowDownOutlined />}
+                value={data?.shortPool}
+                precision={2}
+              />
+            </div>
+            <div className="col-6">
+              <Statistic
+                title="Long Odds"
+                value={data?.longOdds}
+                precision={2}
+                prefix={<ArrowUpOutlined />}
+                valueStyle={{ color: "#3f8600" }}
+              />
+              <Statistic
+                title="Short Odds"
+                value={data?.shortOdds}
+                precision={2}
+                valueStyle={{ color: "#cf1322" }}
+                prefix={<ArrowDownOutlined />}
+              />
+            </div>
           </div>
         </UnmountClosed>
       </div>

@@ -6,21 +6,6 @@ import { PositionSideEnum } from "@hxronetwork/parimutuelsdk";
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import React from "react";
 
-const data = [
-  {
-    title: "Ant Design Title 1",
-  },
-  {
-    title: "Ant Design Title 2",
-  },
-  {
-    title: "Ant Design Title 3",
-  },
-  {
-    title: "Ant Design Title 4",
-  },
-];
-
 const OrderHistory = () => {
   const { marketPair, timeInterval } = useAppProvider();
   const { data: positionsData, isLoading } = usePositions(

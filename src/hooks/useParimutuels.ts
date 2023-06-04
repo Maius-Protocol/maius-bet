@@ -8,6 +8,7 @@ import {
   calculateNetOdd,
 } from "@hxronetwork/parimutuelsdk";
 import { PariConfig } from "../connection";
+import * as process from "process";
 
 export const useParimutuelsKey = "parimutuels";
 interface PariObj {
@@ -64,7 +65,7 @@ function useParimutuels(marketPair: MarketPairEnum, timeSeconds: number) {
     {
       cacheTime: 1000,
       staleTime: 1000,
-      refetchInterval: 15000,
+      refetchInterval: process.env.NODE_ENV === "production" ? 2000 : false,
     }
   );
 }

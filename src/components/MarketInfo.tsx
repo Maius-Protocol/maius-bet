@@ -18,10 +18,19 @@ import usePlacePosition from "../hooks/usePlacePosition";
 import { colors } from "../colors";
 import MarketOptions from "@components/MarketOptions";
 import { TimeIntervals, useAppProvider } from "../AppProvider";
+import dynamic from "next/dynamic";
+
+const CreateTopupWalletAlert = dynamic(
+  () => import("./CreateTopupWalletAlert"),
+  {
+    ssr: false,
+  }
+);
 
 const MarketInfo = () => {
   const { marketPair, timeInterval } = useAppProvider();
   const [amount, setAmount] = useState(10);
+  const [repeatTimes, setRepeatTimes] = useState(1);
   const selectingInterval = TimeIntervals.find(
     (e) => e.seconds === timeInterval
   );
@@ -41,9 +50,17 @@ const MarketInfo = () => {
     console.log("changed", value);
     setAmount(value);
   };
+  const onChangeRepeatTimes = (value: number) => {
+    console.log("changed", value);
+    setAmount(value);
+  };
 
   return (
     <>
+      <div className="mb-4">
+        <CreateTopupWalletAlert />
+      </div>
+
       <div
         className="d-flex flex-column align-items-center justify-content-center py-2"
         style={{ backgroundColor: colors.cardBackground, borderRadius: "8px" }}
@@ -82,6 +99,19 @@ const MarketInfo = () => {
                     max={100000}
                     defaultValue={10}
                     onChange={onChange}
+                  />
+                </div>
+                <div className="mt-2 w-100">
+                  <div className="mb-2">
+                    <b>Repeat</b>
+                  </div>
+                  <InputNumber
+                    size="large"
+                    addonAfter="times"
+                    min={1}
+                    max={60}
+                    defaultValue={1}
+                    onChange={onChangeRepeatTimes}
                   />
                 </div>
                 <Divider />
